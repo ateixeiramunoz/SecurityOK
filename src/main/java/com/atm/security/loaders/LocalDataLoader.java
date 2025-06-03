@@ -1,0 +1,51 @@
+package com.atm.security.loaders;
+
+import com.atm.security.entities.Usuario;
+import com.atm.security.repositories.UsuarioRepository;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Arrays;
+
+
+@Configuration
+@Log4j2
+@Profile("local")
+public class LocalDataLoader {
+
+    final
+    UsuarioRepository usuarioRepository;
+
+    public LocalDataLoader(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+
+    @PostConstruct
+    public void loadDataLocal() {
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        log.info("Iniciando la carga de datos para el perfil local");
+
+        Usuario usuario = new Usuario();
+        usuario.setUsername("user");
+        usuario.setPassword(encoder.encode("123456"));
+        usuario.setNombre("Usuario");
+        usuario.setApellido("Apellido");
+        usuario.setCorreo("correo");
+        usuarioRepository.save(usuario);
+
+
+        log.info("Datos de entidades cargados correctamente.");
+    }
+
+
+
+
+
+}
