@@ -15,10 +15,9 @@
     This content is only shown to administrators.
 </div>
 
-<form action="/logout" method="POST">
-<input type="submit" value="Logout" />
+<form th:action="@{/logout}" method="POST">
+    <input type="submit" value="Logout"/>
 </form>
-
 
 
 <th:each

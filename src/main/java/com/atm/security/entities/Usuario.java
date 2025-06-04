@@ -30,7 +30,6 @@ public class Usuario implements UserDetails, CredentialsContainer {
     String rol;
 
     @OneToMany()
-    Set<Producto> productos;
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {

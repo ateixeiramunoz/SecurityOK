@@ -6,6 +6,7 @@ import com.atm.security.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,23 +27,17 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String nombreUsuario) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByUsername(nombreUsuario)
+                .orElseThrow(() -> new UsernameNotFoundException("Email " +
+                        nombreUsuario + " not found"));
 
-        Usuario employee = usuarioRepository.findByUsername(username);
-
-        employee.getRoles()
-        Set<SimpleGrantedAuthority> authorities = .stream()
-
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-
-                .collect(Collectors.toSet());
-
-        return new User(employee.getUsername(), employee.getPassword(), authorities);
-
-
-
-
-
+        return User.builder()
+                .username(usuario.getUsername())
+                .password(usuario.getPassword())
+                .roles(usuario.getRol())
+                .build();
     }
+
 
 }

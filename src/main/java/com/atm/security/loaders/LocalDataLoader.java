@@ -46,16 +46,8 @@ public class LocalDataLoader {
         usuario.setNombre("Usuario");
         usuario.setApellido("Apellido");
         usuario.setCorreo("correo");
-        usuario.setRol("ROLE_ADMIN");
-
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_ADMIN");
-        Collection<GrantedAuthority> updatedAuthorities = new ArrayList<GrantedAuthority>();
-        updatedAuthorities.add(authority);
-
-        usuario.getAuthorities().addAll(updatedAuthorities);
-
+        usuario.setRol("USER");
         usuarioRepository.save(usuario);
-
 
         usuario = new Usuario();
         usuario.setUsername("alejandro");
@@ -63,6 +55,7 @@ public class LocalDataLoader {
         usuario.setNombre("Usuario");
         usuario.setApellido("Apellido");
         usuario.setCorreo("correo");
+        usuario.setRol("ADMIN");
         usuarioRepository.save(usuario);
 
 
