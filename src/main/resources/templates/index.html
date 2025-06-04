@@ -1,1 +1,13 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<body>
 HOME
+
+
+<div sec:authorize="isAuthenticated()">
+    This content is only shown to authenticated users.
+</div>
+</body>
+
+</html>

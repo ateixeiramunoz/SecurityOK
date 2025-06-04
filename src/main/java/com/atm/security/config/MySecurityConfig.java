@@ -17,15 +17,21 @@ public class MySecurityConfig {
     public SecurityFilterChain cadenaDeFiltros(HttpSecurity http) throws Exception {
         http
                 .csrf(Customizer.withDefaults())
+                .logout((logout) -> logout
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
 
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
                 )
 
+
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 );
 

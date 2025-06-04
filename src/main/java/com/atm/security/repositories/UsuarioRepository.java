@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
     Optional<Usuario> findByNombre(String jetBrains);
     Optional<Usuario> findByUsername(String jetBrains);
     Optional<Usuario> findByCorreo(String jetBrains);
