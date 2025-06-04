@@ -24,7 +24,7 @@ public class EmailConfig {
     @Bean // this is a template message that we can pre-load with default state
     SimpleMailMessage templateMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("info@claseseoi.com");
+        message.setFrom("info@serverjava.net");
         return message;
     }
 

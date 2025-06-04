@@ -54,7 +54,7 @@ public class DefaultController {
     @GetMapping("/")
     public String showIndex()
     {
-        enviadorDeEmails.enviarEmail("pepe","hola", "supermensaje");
+        enviadorDeEmails.enviarEmail("pepe@pepe.com","hola", "supermensaje");
         return "index";
     }
 
@@ -74,6 +74,8 @@ public class DefaultController {
         log.info("El usuario {} tiene {} authorities", username, authorities.size());
         model.addAttribute("username", username);
         model.addAttribute("authorities", authorities);
+        enviadorDeEmails.enviarEmailMIME("pepe@pepe.com","hola", "supermensaje", principal);
+
         return "privado";
 
     }
