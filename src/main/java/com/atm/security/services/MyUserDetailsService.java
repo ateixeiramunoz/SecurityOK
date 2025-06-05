@@ -4,6 +4,8 @@ package com.atm.security.services;
 import com.atm.security.entities.Usuario;
 import com.atm.security.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -38,6 +40,27 @@ public class MyUserDetailsService implements UserDetailsService {
                 .roles(usuario.getRol())
                 .build();
     }
+
+
+
+    @PostAuthorize("#username == authentication.principal.username")
+    public Usuario modifyUser(Usuario usuario) throws UsernameNotFoundException {
+
+        Usuario usuarioRecuperado = new Usuario();
+        usuarioRecuperado = usuarioRepository.findByUsername(usuario.getUsername()).get();
+        return usuarioRecuperado;
+
+    }
+
+
+
+    @PostAuthorize("returnObject.count < 3")
+    public void registrarDispositivos(Usuario usuario) throws UsernameNotFoundException {
+
+        return usuarioRecuperado;
+
+    }
+
 
 
 }

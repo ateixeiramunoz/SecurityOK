@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -91,4 +92,16 @@ public class DefaultController {
     {
         return "loginAlejandro";
     }
+
+
+
+    @GetMapping("/prueba")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String showPrueba( Principal principal, Authentication auth)
+    {
+        return "prueba";
+    }
+
+
+
 }
