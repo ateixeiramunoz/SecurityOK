@@ -54,13 +54,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
 
 
-    @PostAuthorize("returnObject.count < 3")
-    public void registrarDispositivos(Usuario usuario) throws UsernameNotFoundException {
-
-        return usuarioRecuperado;
-
-    }
-
 
 
 }
