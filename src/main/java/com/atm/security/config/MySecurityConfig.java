@@ -45,6 +45,8 @@ public class MySecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/foro/**").permitAll()
+                        .requestMatchers("/canales/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .requestMatchers("/prueba").authenticated()

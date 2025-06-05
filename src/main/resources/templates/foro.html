@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layouts/main_layout.html}">
+
+<body>
+<section layout:fragment="content">
+
+        <div class="container mt-5">
+                <h2 class="mb-4">Publicar nuevo mensaje</h2>
+
+                <form th:action="@{/foro/crearMensaje}" method="post">
+                        <div class="mb-3">
+                                <label for="mensaje" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                                <label for="mensajePadre" class="form-label">ID del mensaje padre (opcional)</label>
+                                <input type="text" class="form-control" id="mensajePadre" name="mensajePadre" placeholder="0">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+        </div>
+
+        <div class="container mt-5">
+                <h2 class="mb-4">Mensajes del Foro</h2>
+                <table class="table table-striped table-bordered table-hover">
+                        <thead class="table-primary">
+                        <tr>
+                                <th>ID</th>
+                                <th>ID Padre</th>
+                                <th>Título</th>
+                                <th>Mensaje</th>
+                                <th>Activo</th>
+                                <th>Censurado</th>
+                                <th>Visible</th>
+                                <th>Usuario</th>
+                                <th>Canal</th>
+                                <th>Acciones</th> <!-- Nueva columna -->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="mensaje : ${mensajes}">
+                                <td th:text="${mensaje.id}">1</td>
+                                <td th:text="${mensaje.idPadre}">0</td>
+                                <td th:text="${mensaje.titulo}">Título</td>
+                                <td th:text="${mensaje.mensaje}">Contenido del mensaje</td>
+                                <td th:text="${mensaje.active}">true</td>
+                                <td th:text="${mensaje.censored}">false</td>
+                                <td th:text="${mensaje.visible}">true</td>
+                                <td th:text="${mensaje.usuario.nombre}">Usuario</td>
+                                <td th:text="${mensaje.canal.nombre}">Canal</td>
+                                <td>
+                                        <a th:href="@{/foro/responder/{id}(id=${mensaje.id})}" class="btn btn-sm btn-success me-2">Responder</a>
+                                        <a th:href="@{/foro/eliminar/{id}(id=${mensaje.id})}" class="btn btn-sm btn-danger"
+                                           onclick="return confirm('¿Seguro que quieres eliminar este mensaje?');">Eliminar</a>
+                                </td>
+                        </tr>
+                        </tbody>
+                </table>
+        </div>
+
+</section>
+</body>
+</html>
