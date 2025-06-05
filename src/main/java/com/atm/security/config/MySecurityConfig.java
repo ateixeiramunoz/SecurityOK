@@ -48,6 +48,7 @@ public class MySecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .requestMatchers("/prueba").authenticated()
+                        .requestMatchers("/paginaUsuarios").authenticated()
                         .anyRequest().authenticated()
                 );
 

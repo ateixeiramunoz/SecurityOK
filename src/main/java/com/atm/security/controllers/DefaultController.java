@@ -2,6 +2,7 @@ package com.atm.security.controllers;
 
 
 import com.atm.security.email.EnviadorDeEmails;
+import com.atm.security.entities.Usuario;
 import com.atm.security.repositories.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The type Default controller.
@@ -88,11 +90,20 @@ public class DefaultController {
      * @return the string
      */
     @GetMapping("/login")
-    public String showAlejandro()
+    public String showAlejandro(Model  model    )
     {
+
         return "loginAlejandro";
     }
 
+
+    @GetMapping("/usuarios")
+    public String showUsuarios(Model  model    )
+    {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        model.addAttribute("usuarios", usuarios);
+        return "paginaUsuarios";
+    }
 
 
     @GetMapping("/prueba")
@@ -101,6 +112,15 @@ public class DefaultController {
     {
         return "prueba";
     }
+
+
+    @GetMapping("/paginaconlayout")
+    public String showPaginaLayout()
+    {
+        return "paginaConLayout";
+    }
+
+
 
 
 
