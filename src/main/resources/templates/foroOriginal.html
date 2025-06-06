@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layouts/main_layout.html}">
+
+<body>
+<section layout:fragment="content">
+
+
+        <h2 class="mb-4"
+            th:text="${canalSeleccionado != null} ? 'Mensajes del canal: ' + ${canalSeleccionado.nombre} : 'Mensajes del Foro'">
+                Mensajes del Foro
+        </h2>
+
+        <div class="container mt-4">
+                <h4 class="mb-3">Filtrar por canal</h4>
+                <div class="btn-group mb-4" role="group" aria-label="Filtrar canales">
+                        <a th:href="@{/foro}" class="btn btn-outline-secondary">Todos</a>
+                        <a th:each="canal : ${canales}"
+                           th:href="@{/foro(canalId=${canal.id})}"
+                           th:text="${canal.nombre}"
+                           class="btn btn-outline-primary">
+                                Canal
+                        </a>
+                </div>
+        </div>
+
+
+
+
+
+        <div class="container mt-5">
+                <h2 class="mb-4">Mensajes del Foro</h2>
+                <table class="table table-striped table-bordered table-hover">
+                        <thead class="table-primary">
+                        <tr>
+                                <th>ID</th>
+                                <th>ID Padre</th>
+                                <th>Título</th>
+                                <th>Mensaje</th>
+                                <th>Activo</th>
+                                <th>Censurado</th>
+                                <th>Visible</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th> <!-- Nuevo -->
+                                <th th:if="${canalSeleccionado == null}">Canal</th>
+                                <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="mensaje : ${mensajes}">
+                                <td th:text="${mensaje.id}">1</td>
+                                <td th:text="${mensaje.idPadre}">0</td>
+                                <td th:text="${mensaje.titulo}">Título</td>
+                                <td th:text="${mensaje.mensaje}">Contenido</td>
+                                <td th:text="${mensaje.active}">true</td>
+                                <td th:text="${mensaje.censored}">false</td>
+                                <td th:text="${mensaje.visible}">true</td>
+                                <td th:text="${mensaje.usuario.nombre}">Usuario</td>
+                                <td th:text="${#temporals.format(mensaje.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2025 12:00</td> <!-- Nuevo -->
+
+                                <td th:if="${canalSeleccionado == null}" th:text="${mensaje.canal.nombre}">Canal</td>
+
+                                <td>
+                                        <a th:href="@{/foro(canalId=${mensaje.canal.id}, idPadre=${mensaje.id})}" class="btn btn-sm btn-success me-2">Responder</a>
+                                        <a th:href="@{/foro/eliminar/{id}(id=${mensaje.id})}" class="btn btn-sm btn-danger"
+                                           onclick="return confirm('¿Seguro que quieres eliminar este mensaje?');">Eliminar</a>
+                                </td>
+                        </tr>
+                        </tbody>
+
+
+                </table>
+        </div>
+
+        <div class="container mt-5">
+                <h2 class="mb-4"
+                    th:text="${param.idPadre} != null ? 'Responder al mensaje #' + param.idPadre : 'Publicar nuevo mensaje'">
+                        Publicar nuevo mensaje
+                </h2>
+
+                <form th:action="@{/foro/crearMensaje}" method="post">
+                        <input type="hidden" th:value="${param.canalId}" name="canalId">
+                        <input type="hidden" th:value="${param.idPadre ?: 0}" name="mensajePadre">
+
+                        <div class="mb-3">
+                                <label for="mensaje" class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+        </div>
+
+
+
+
+</section>
+</body>
+</html>

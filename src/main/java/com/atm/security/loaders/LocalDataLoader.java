@@ -2,6 +2,8 @@ package com.atm.security.loaders;
 
 import ch.qos.logback.core.LayoutBase;
 import com.atm.security.entities.Usuario;
+import com.atm.security.foro.entities.Canal;
+import com.atm.security.foro.repositories.CanalRepository;
 import com.atm.security.repositories.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -27,9 +29,13 @@ public class LocalDataLoader {
 
     final
     UsuarioRepository usuarioRepository;
+    final
+    CanalRepository canalRepository;
 
-    public LocalDataLoader(UsuarioRepository usuarioRepository) {
+
+    public LocalDataLoader(UsuarioRepository usuarioRepository, CanalRepository canalRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.canalRepository = canalRepository;
     }
 
 
@@ -60,6 +66,21 @@ public class LocalDataLoader {
 
 
         log.info("Datos de entidades cargados correctamente.");
+
+        Canal canal = new Canal();
+        canal.setNombre("Videojuegos");
+        canalRepository.save(canal);
+
+        canal = new Canal();
+        canal.setNombre("Ciencia");
+        canalRepository.save(canal);
+
+        canal = new Canal();
+        canal.setNombre("Política");
+        canalRepository.save(canal);
+
+
+
     }
 
 

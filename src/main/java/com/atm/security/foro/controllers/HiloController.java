@@ -11,18 +11,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/foro")
-public class ForoController {
+public class HiloController {
 
 
     final CanalRepository canalRepository;
@@ -33,7 +30,7 @@ public class ForoController {
     UsuarioRepository usuarioRepository;
 
 
-    public ForoController(CanalRepository canalRepository, MensajesForoRepository mensajesForoRepository, UsuarioRepository usuarioRepository)
+    public HiloController(CanalRepository canalRepository, MensajesForoRepository mensajesForoRepository, UsuarioRepository usuarioRepository)
     {
         this.canalRepository = canalRepository;
         this.mensajesForoRepository = mensajesForoRepository;
@@ -41,17 +38,36 @@ public class ForoController {
 
     }
 
+    @GetMapping("/hilo/{mensajeID}")
+    public String verForo(@PathVariable(value="mensajeID") String mensajeId, @RequestParam(required = false) Long canalId, Model model) {
 
-    @GetMapping("")
-    public String verForo(@RequestParam(required = false) Long canalId, Model model) {
         List<Canal> canales = canalRepository.findAll();
+
         if (canalId != null) {
 
-            List<MensajeForo> mensajes;
+            List<MensajeForo> mensajes = new ArrayList<>();
             Optional<Canal> canal = canalRepository.findById(canalId);
+            Optional<MensajeForo> mensaje = mensajesForoRepository.findById(Long.parseLong(mensajeId));
             if(canal.isPresent())
             {
-                mensajes  = mensajesForoRepository.findAllByCanalAndIdPadre(canal.get(), 0);
+
+                //Necesitamos calcular el siguiente mensaje de primer nivel o de nivel igual al que queremos consultar
+                if(mensaje.isPresent())
+                {
+                    Optional<MensajeForo> siguientemensaje = mensajesForoRepository.findOneByIdHiloEqualsAndIdPadreLessThanEqualAndIdGreaterThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
+
+                    if(siguientemensaje.isPresent())
+                    {
+                        mensajes = mensajesForoRepository.findByIdHiloEqualsAndIdPadreGreaterThanAndIdLessThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
+                    }
+                    else
+                    {
+                        mensajes = mensajesForoRepository.findByIdHiloEqualsAndIdPadreGreaterThan(Long.parseLong(mensajeId),0);
+                    }
+
+
+                }
+
                 //mensajes = mensajesForoRepository.findAllByCanal(canal.get());
                 model.addAttribute("mensajes", mensajes);
                 model.addAttribute("canalSeleccionado", canal.get());
@@ -65,7 +81,7 @@ public class ForoController {
 
         model.addAttribute("canales", canales);
 
-        return "foro";
+        return "hilo";
     }
 
 
@@ -81,7 +97,7 @@ public class ForoController {
         mensajeForo.setMensaje(mensaje);
         mensajeForo.setActive(true);
         mensajeForo.setFecha(LocalDateTime.now());
-        if (!canalId.isEmpty()) {
+        if(!canalId.isEmpty()){
             Optional<Canal> canal = canalRepository.findById(Long.parseLong(canalId));
             canal.ifPresent(mensajeForo::setCanal);
 
@@ -89,14 +105,8 @@ public class ForoController {
         List<MensajeForo> mensajes;
         Canal canalSeleccionado;
 
-        if (!mensajePadre.isEmpty()) {
+        if(!mensajePadre.isEmpty())
             mensajeForo.setIdPadre(Long.parseLong(mensajePadre));
-        } else
-        {
-            //El mensaje es principal por lo que ponemos a 0 su padre
-            mensajeForo.setIdPadre(0L);
-
-        }
 
         if (canalId.isEmpty()) {
             mensajes = mensajesForoRepository.findAll();
@@ -115,17 +125,7 @@ public class ForoController {
         }
 
 
-        mensajeForo = mensajesForoRepository.save(mensajeForo);
-
-        if(mensajeForo.getIdPadre()==0L)
-        {
-            mensajeForo.setIdHilo(mensajeForo.getIdHilo());
-        }
-        else
-        {
-            mensajeForo.setIdHilo(mensajesForoRepository.findById(mensajeForo.getIdPadre()).get().getIdHilo());
-        }
-
+        mensajesForoRepository.save(mensajeForo);
         return "redirect:/foro?canalId=" + canalId;
     }
 

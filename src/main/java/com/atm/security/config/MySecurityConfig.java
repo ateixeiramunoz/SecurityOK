@@ -47,6 +47,7 @@ public class MySecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/foro/**").permitAll()
                         .requestMatchers("/canales/**").permitAll()
+                        .requestMatchers("/hilo/**").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/logout").permitAll()
                         .requestMatchers("/prueba").authenticated()
