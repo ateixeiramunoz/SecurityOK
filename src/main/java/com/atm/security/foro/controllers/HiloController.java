@@ -16,18 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class HiloController {
 
-
     final CanalRepository canalRepository;
-
-    final
-    MensajesForoRepository mensajesForoRepository;
-    final
-    UsuarioRepository usuarioRepository;
+    final MensajesForoRepository mensajesForoRepository;
+    final UsuarioRepository usuarioRepository;
 
 
     public HiloController(CanalRepository canalRepository, MensajesForoRepository mensajesForoRepository, UsuarioRepository usuarioRepository)
@@ -58,21 +56,22 @@ public class HiloController {
 
                     if(siguientemensaje.isPresent())
                     {
-                        mensajes = mensajesForoRepository.findByIdHiloEqualsAndIdPadreGreaterThanAndIdLessThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
+                        mensajes = mensajesForoRepository.findAllByIdHiloEqualsAndIdPadreGreaterThanAndIdLessThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
+                        model.addAttribute("mensajes", mensajes);
+                        model.addAttribute("canalSeleccionado", canal.get());
                     }
                     else
                     {
-                        mensajes = mensajesForoRepository.findByIdHiloEqualsAndIdPadreGreaterThan(Long.parseLong(mensajeId),0);
+                        List<MensajeForo> mensajesok = mensajesForoRepository.buscarRespuestas(Long.parseLong(mensajeId));
+                        Map<Long, List<MensajeForo>> hijosPorPadre = mensajesok.stream()
+                                .collect(Collectors.groupingBy(MensajeForo::getIdPadre));
+                        model.addAttribute("mensajes", hijosPorPadre);
+
+                        //model.addAttribute("mensajes", mensajesok);
+                        model.addAttribute("canalSeleccionado", canal.get());
                     }
-
-
                 }
-
-                //mensajes = mensajesForoRepository.findAllByCanal(canal.get());
-                model.addAttribute("mensajes", mensajes);
-                model.addAttribute("canalSeleccionado", canal.get());
             }
-
         } else {
             List<MensajeForo> mensajes;
             mensajes = mensajesForoRepository.findAll();

@@ -30,50 +30,12 @@
                             th:text="${canalSeleccionado != null} ? 'Mensajes del canal: ' + ${canalSeleccionado.nombre} : 'Mensajes del Foro'">
                                 Mensajes del Foro
                         </h2>
+ 
 
-                        <div th:each="padre : ${mensajes}"
-                             th:if="${padre.idPadre == 0}"
-                             class="card mb-4 border-primary">
+                        <div th:replace="~{fragments/listaMensajes :: mostrarHijos(0, 0)}"></div>
 
-                                <div class="card-header bg-primary text-white">
-                                        <strong th:text="'#' + ${padre.id} + ' - ' + ${padre.titulo}">Título del hilo</strong>
-                                        <span class="float-end" th:text="${#temporals.format(padre.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2025</span>
-                                </div>
 
-                                <div class="card-body">
-                                        <p class="card-text" th:text="${padre.mensaje}">Mensaje principal</p>
-                                        <p class="mb-0"><strong>Usuario:</strong> <span th:text="${padre.usuario.nombre}">Nombre</span></p>
-                                        <p class="mb-0"><strong>Estado:</strong>
-                                                <span th:text="'Activo: ' + ${padre.active} + ', Censurado: ' + ${padre.censored} + ', Visible: ' + ${padre.visible}"></span>
-                                        </p>
-                                        <div class="mt-2">
-                                                <a th:href="@{/foro(canalId=${padre.canal.id}, idPadre=${padre.id})}" class="btn btn-sm btn-success">Responder</a>
-                                                <a th:href="@{/foro/eliminar/{id}(id=${padre.id})}" class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('¿Seguro que quieres eliminar este mensaje?');">Eliminar</a>
-                                        </div>
-                                </div>
 
-                                <!-- Mensajes hijos (respuestas) -->
-                                <div class="card-footer bg-light">
-                                        <div th:each="hijo : ${mensajes}"
-                                             th:if="${hijo.idPadre == padre.id}"
-                                             class="border-top pt-3 mt-3">
-
-                                                <p class="mb-1"><strong th:text="'#' + ${hijo.id} + ' - ' + ${hijo.usuario.nombre}">Usuario</strong>
-                                                        <span class="text-muted float-end" th:text="${#temporals.format(hijo.fecha, 'dd/MM/yyyy HH:mm')}">Fecha</span>
-                                                </p>
-                                                <p th:text="${hijo.mensaje}">Contenido de la respuesta</p>
-                                                <p class="mb-0"><strong>Estado:</strong>
-                                                        <span th:text="'Activo: ' + ${hijo.active} + ', Censurado: ' + ${hijo.censored} + ', Visible: ' + ${hijo.visible}"></span>
-                                                </p>
-                                                <div class="mt-2">
-                                                        <a th:href="@{/foro(canalId=${hijo.canal.id}, idPadre=${hijo.id})}" class="btn btn-sm btn-success me-2">Responder</a>
-                                                        <a th:href="@{/foro/eliminar/{id}(id=${hijo.id})}" class="btn btn-sm btn-danger"
-                                                           onclick="return confirm('¿Seguro que quieres eliminar este mensaje?');">Eliminar</a>
-                                                </div>
-                                        </div>
-                                </div>
-                        </div>
                 </div>
 
         <div class="container mt-5">

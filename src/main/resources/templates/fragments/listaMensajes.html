@@ -1,0 +1,25 @@
+<div th:fragment="mostrarHijos(padreId, nivel)">
+    <div th:each="m : ${hijosPorPadre[padreId]}" class="card mt-3" th:classappend="' ms-' + (${nivel} * 2)">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <strong th:text="'#' + ${m.id} + ' - ' + ${m.titulo}">Título</strong>
+                <span class="text-muted" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+            </div>
+            <p th:text="${m.mensaje}">Contenido</p>
+            <p class="mb-0"><strong>Usuario:</strong> <span th:text="${m.usuario.nombre}">Nombre</span></p>
+            <p class="mb-0"><strong>Estado:</strong>
+                <span th:text="'Activo: ' + ${m.active} + ', Censurado: ' + ${m.censored} + ', Visible: ' + ${m.visible}"></span>
+            </p>
+            <div class="mt-2">
+                <a th:href="@{/foro(canalId=${m.canal.id}, idPadre=${m.id})}" class="btn btn-sm btn-success">Responder</a>
+                <a th:href="@{/foro/eliminar/{id}(id=${m.id})}" class="btn btn-sm btn-danger"
+                   onclick="return confirm('¿Seguro que quieres eliminar este mensaje?');">Eliminar</a>
+            </div>
+
+            <!-- Mostrar recursivamente los hijos -->
+            <div th:if="${hijosPorPadre.containsKey(m.id)}">
+                <div th:replace="~{::mostrarHijos(${m.id}, ${nivel + 1})}"></div>
+            </div>
+        </div>
+    </div>
+</div>

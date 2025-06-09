@@ -75,59 +75,59 @@ public class ForoController {
 
 
     @PostMapping("/crearMensaje")
-    public String postMensaje(@RequestParam String mensaje, @RequestParam String mensajePadre, @RequestParam(required = false) String canalId, Model  model, Authentication auth) {
+    public String postMensaje(@RequestParam String mensaje,
+                              @RequestParam String mensajePadre,
+                              @RequestParam(required = false) String canalId,
+                              Model model,
+                              Authentication auth) {
 
         MensajeForo mensajeForo = new MensajeForo();
         mensajeForo.setMensaje(mensaje);
         mensajeForo.setActive(true);
+        mensajeForo.setVisible(false);
+        mensajeForo.setCensored(false);
         mensajeForo.setFecha(LocalDateTime.now());
-        if (!canalId.isEmpty()) {
-            Optional<Canal> canal = canalRepository.findById(Long.parseLong(canalId));
-            canal.ifPresent(mensajeForo::setCanal);
 
-        }
-        List<MensajeForo> mensajes;
-        Canal canalSeleccionado;
-
-        if (!mensajePadre.isEmpty()) {
-            mensajeForo.setIdPadre(Long.parseLong(mensajePadre));
-        } else
-        {
-            //El mensaje es principal por lo que ponemos a 0 su padre
-            mensajeForo.setIdPadre(0L);
-
+        // Canal
+        if (canalId != null && !canalId.isEmpty()) {
+            canalRepository.findById(Long.parseLong(canalId))
+                    .ifPresent(mensajeForo::setCanal);
         }
 
-        if (canalId.isEmpty()) {
-            mensajes = mensajesForoRepository.findAll();
+        // Usuario autenticado
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        usuarioRepository.findByUsername(username)
+                .ifPresent(mensajeForo::setUsuario);
 
-        } else {
-
-            canalSeleccionado= canalRepository.findById(Long.valueOf(canalId)).orElse(null);
-            mensajes = mensajesForoRepository.findAllByCanal(canalSeleccionado);
+        // ID Padre
+        long idPadre = 0L;
+        if (mensajePadre != null && !mensajePadre.isEmpty()) {
+            idPadre = Long.parseLong(mensajePadre);
         }
+        mensajeForo.setIdPadre(idPadre);
 
-        String username = ((UserDetails)auth.getPrincipal()).getUsername();
-        Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
-
-        if (usuario.isPresent()) {
-            mensajeForo.setUsuario(usuario.get());
-        }
-
-
+        // 1er guardado (obtenemos ID si es raíz)
         mensajeForo = mensajesForoRepository.save(mensajeForo);
 
-        if(mensajeForo.getIdPadre()==0L)
-        {
-            mensajeForo.setIdHilo(mensajeForo.getIdHilo());
+        // ID Hilo
+        if (idPadre == 0L) {
+            // mensaje raíz → idHilo es su propio id
+            mensajeForo.setIdHilo(mensajeForo.getId());
+        } else {
+            // respuesta → idHilo es el idHilo del mensaje padre
+            mensajeForo.setIdHilo(
+                    mensajesForoRepository.findById(idPadre)
+                            .map(MensajeForo::getIdHilo)
+                            .orElse(idPadre) // fallback si el padre no se encuentra
+            );
         }
-        else
-        {
-            mensajeForo.setIdHilo(mensajesForoRepository.findById(mensajeForo.getIdPadre()).get().getIdHilo());
-        }
+
+        // 2º guardado (con idHilo)
+        mensajesForoRepository.save(mensajeForo);
 
         return "redirect:/foro?canalId=" + canalId;
     }
+
 
 
 
