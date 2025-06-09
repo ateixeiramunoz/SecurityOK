@@ -52,17 +52,37 @@ public class HiloController {
                 //Necesitamos calcular el siguiente mensaje de primer nivel o de nivel igual al que queremos consultar
                 if(mensaje.isPresent())
                 {
-                    Optional<MensajeForo> siguientemensaje = mensajesForoRepository.findOneByIdHiloEqualsAndIdPadreLessThanEqualAndIdGreaterThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
+                    Optional<MensajeForo> siguientemensaje;
 
+                    if(mensaje.get().getIdPadre()==0)
+                    {
+                        siguientemensaje = mensajesForoRepository.findOneByIdHiloAndIdPadreAndIdGreaterThan(mensaje.get().getIdHilo(), Long.parseLong(mensajeId) , Long.parseLong(mensajeId));
+                    }
+                    else
+                    {
+                        siguientemensaje = mensajesForoRepository.findOneByIdHiloAndIdPadreLessThanAndIdGreaterThan(mensaje.get().getIdHilo(), Long.parseLong(mensajeId) , Long.parseLong(mensajeId));
+                    }
+
+
+
+
+                    //Comprueba si tenemos un mensaje de tipo #8
                     if(siguientemensaje.isPresent())
                     {
-                        mensajes = mensajesForoRepository.findAllByIdHiloEqualsAndIdPadreGreaterThanAndIdLessThan(Long.parseLong(mensajeId), 0L, Long.parseLong(mensajeId));
-                        model.addAttribute("mensajes", mensajes);
+                        List<MensajeForo> mensajesok  = mensajes =mensajesForoRepository.findAllByIdHiloAndIdPadreGreaterThanEqualAndIdLessThan( mensaje.get().getIdHilo(), mensaje.get().getIdPadre(), siguientemensaje.get().getId());
+
+                        Map<Long, List<MensajeForo>> hijosPorPadre = mensajes.stream()
+                                .collect(Collectors.groupingBy(MensajeForo::getIdPadre));
+
+                        //model.addAttribute("mensajes", hijosPorPadre);
+
+
+                        model.addAttribute("mensajes", hijosPorPadre);
                         model.addAttribute("canalSeleccionado", canal.get());
                     }
                     else
                     {
-                        List<MensajeForo> mensajesok = mensajesForoRepository.buscarRespuestas(Long.parseLong(mensajeId));
+                        List<MensajeForo> mensajesok = mensajesForoRepository.findAllByIdHiloAndIdPadreGreaterThan(mensaje.get().getIdHilo(), Long.parseLong(mensajeId));
                         Map<Long, List<MensajeForo>> hijosPorPadre = mensajesok.stream()
                                 .collect(Collectors.groupingBy(MensajeForo::getIdPadre));
                         model.addAttribute("mensajes", hijosPorPadre);

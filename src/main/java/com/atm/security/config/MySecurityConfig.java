@@ -1,13 +1,19 @@
 package com.atm.security.config;
 
+import com.atm.security.chat.entities.ChatMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Optional;
 
 /**
  * The type My security config.
@@ -43,17 +49,23 @@ public class MySecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/foro/**").permitAll()
-                        .requestMatchers("/canales/**").permitAll()
-                        .requestMatchers("/hilo/**").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/logout").permitAll()
-                        .requestMatchers("/prueba").authenticated()
-                        .requestMatchers("/paginaUsuarios").authenticated()
-                        .anyRequest().authenticated()
-                );
+                .authorizeHttpRequests(authorize -> Optional.ofNullable(authorize
+                                .requestMatchers("/").permitAll()
+                                .requestMatchers("/css/**").permitAll()
+                                .requestMatchers("/js/**").permitAll()
+                                .requestMatchers("/foro/**").permitAll()
+                                .requestMatchers("/canales/**").permitAll()
+                                .requestMatchers("/hilo/**").permitAll()
+                                .requestMatchers("/enviar/ciencia").permitAll()
+                                .requestMatchers("/topic/ciencia").permitAll()
+                                .requestMatchers("/mostrarChat").permitAll()
+                                .requestMatchers("/gs-guide-websocket").permitAll()
+                                .requestMatchers("/login").permitAll()
+                                .requestMatchers("/logout").permitAll()
+                                .requestMatchers("/prueba").authenticated()
+                                .requestMatchers("/paginaUsuarios").authenticated()
+                                .anyRequest().authenticated()
+                ));
 
         return http.build();
     }

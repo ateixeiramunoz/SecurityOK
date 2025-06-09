@@ -30,9 +30,9 @@
                             th:text="${canalSeleccionado != null} ? 'Mensajes del canal: ' + ${canalSeleccionado.nombre} : 'Mensajes del Foro'">
                                 Mensajes del Foro
                         </h2>
- 
 
-                        <div th:replace="~{fragments/listaMensajes :: mostrarHijos(0, 0)}"></div>
+
+                        <div th:replace="~{fragments/listaMensajes :: mostrarHijos(0L, 0L)}"></div>
 
 
 

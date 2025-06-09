@@ -18,10 +18,11 @@ public interface MensajesForoRepository extends JpaRepository<MensajeForo, Long>
 
     List<MensajeForo> findAllByCanalAndIdPadre(Canal canal, long idPadre);
 
-    Optional<MensajeForo> findOneByIdHiloEqualsAndIdPadreLessThanEqualAndIdGreaterThan(long idHilo, long idPadre, long idMensaje);
+    Optional<MensajeForo> findOneByIdHiloAndIdPadreLessThanAndIdGreaterThan(long idHilo, long idPadre, long idMensaje);
 
+    Optional<MensajeForo> findOneByIdHiloAndIdPadreAndIdGreaterThan(long idHilo, long idPadre, long idMensaje);
 
-    List<MensajeForo> findAllByIdHiloEqualsAndIdPadreGreaterThanAndIdLessThan(long idHilo, Long idPadre, long idMensaje);
+    List<MensajeForo> findAllByIdHiloAndIdPadreGreaterThanEqualAndIdLessThan(long idHilo, Long idPadre, long idMensaje);
     List<MensajeForo> findAllByIdHiloAndIdPadreGreaterThan(long l, long l1);
 
     @Query("SELECT m FROM MensajeForo m WHERE m.idHilo = :idHilo AND m.idPadre > 0")
