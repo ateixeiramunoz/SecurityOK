@@ -1,12 +1,18 @@
 package com.atm.security.foro.controllers;
 
 
+import com.atm.security.chat.controllers.ChatController;
+import com.atm.security.chat.entities.ChatMessage;
 import com.atm.security.entities.Usuario;
 import com.atm.security.foro.entities.Canal;
 import com.atm.security.foro.entities.MensajeForo;
 import com.atm.security.foro.repositories.CanalRepository;
 import com.atm.security.foro.repositories.MensajesForoRepository;
 import com.atm.security.repositories.UsuarioRepository;
+import org.apache.logging.log4j.message.SimpleMessage;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -32,13 +38,16 @@ public class ForoController {
     final
     UsuarioRepository usuarioRepository;
 
+    final ChatController chatController;
 
-    public ForoController(CanalRepository canalRepository, MensajesForoRepository mensajesForoRepository, UsuarioRepository usuarioRepository)
+
+    public ForoController(CanalRepository canalRepository, MensajesForoRepository mensajesForoRepository, UsuarioRepository usuarioRepository, ChatController chatController)
     {
         this.canalRepository = canalRepository;
         this.mensajesForoRepository = mensajesForoRepository;
         this.usuarioRepository = usuarioRepository;
 
+        this.chatController = chatController;
     }
 
 
@@ -79,7 +88,7 @@ public class ForoController {
                               @RequestParam String mensajePadre,
                               @RequestParam(required = false) String canalId,
                               Model model,
-                              Authentication auth) {
+                              Authentication auth) throws Exception {
 
         MensajeForo mensajeForo = new MensajeForo();
         mensajeForo.setMensaje(mensaje);
@@ -107,6 +116,9 @@ public class ForoController {
         mensajeForo.setIdPadre(idPadre);
 
         // 1er guardado (obtenemos ID si es raíz)
+
+
+
         mensajeForo = mensajesForoRepository.save(mensajeForo);
 
         // ID Hilo
@@ -122,8 +134,15 @@ public class ForoController {
             );
         }
 
+
+//        SimpMessagingTemplate simpMessagingTemplate = new SimpMessagingTemplate((MessageChannel) chatController);
+//        simpMessagingTemplate.convertAndSend("/topic/ciencia", mensajeForo);
+
+
+
         // 2º guardado (con idHilo)
         mensajesForoRepository.save(mensajeForo);
+
 
         return "redirect:/foro?canalId=" + canalId;
     }
@@ -132,14 +151,12 @@ public class ForoController {
 
 
     @PostMapping("/responderMensaje")
-    public String responderMensaje(@RequestParam String mensaje, @RequestParam String mensajePadre, @RequestParam long canalId, Model  model, Authentication auth)
-    {
+    public String responderMensaje(@RequestParam String mensaje, @RequestParam String mensajePadre, @RequestParam long canalId, Model  model, Authentication auth) throws Exception {
         MensajeForo mensajeForo = new MensajeForo();
         mensajeForo.setMensaje(mensaje);
         mensajeForo.setActive(true);
         Optional<Canal> canal = canalRepository.findById(canalId);
         canal.ifPresent(mensajeForo::setCanal);
-
 
         if(!mensajePadre.isEmpty())
             mensajeForo.setIdPadre(Long.parseLong(mensajePadre));
@@ -149,8 +166,6 @@ public class ForoController {
         if (usuario.isPresent()) {
             mensajeForo.setUsuario(usuario.get());
         }
-
-
         mensajesForoRepository.save(mensajeForo);
         return "redirect:/foro?canalId=" + canalId;
     }

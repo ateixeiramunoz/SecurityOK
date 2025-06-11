@@ -1,5 +1,6 @@
 package com.atm.security.chat.entities;
 
+import com.atm.security.entities.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,9 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
-
-
 public class ChatMessage {
 
     @Id
@@ -24,6 +22,9 @@ public class ChatMessage {
 
     private String message;
     private LocalDateTime timestamp;
+
+    @ManyToOne
+    private Usuario usuario;
 
 
 }

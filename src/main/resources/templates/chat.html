@@ -1,52 +1,145 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layouts/main_layout.html}">
 <head>
-    <title>Hello WebSocket</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .row {
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+        .col-md-6, .col-md-12 {
+            position: relative;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            float: left;
+        }
+        .col-md-6 {
+            width: 50%;
+        }
+        .col-md-12 {
+            width: 100%;
+        }
+        .form-inline .form-group {
+            margin-right: 10px;
+        }
+        .form-control {
+            display: inline-block;
+            width: auto;
+            vertical-align: middle;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        .table th,
+        .table td {
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #ddd;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+    </style>
+
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script th:src="@{/js/app.js}"></script>
 </head>
+
 <body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
-<div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
-                </div>
-            </form>
+<section layout:fragment="content">
+
+    <img th:src="@{/img/logo.jpg}" alt="" class="img-responsive">
+
+
+    <div id="main-content" class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="connect">WebSocket connection:</label>
+                        <button id="connect" class="btn" type="submit">Connect</button>
+                        <button id="disconnect" class="btn" type="submit" disabled="disabled">Disconnect</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="textoMensaje">What is your name?</label>
+                        <input type="text" id="textoMensaje" class="form-control" placeholder="Your name here...">
+                    </div>
+                    <button id="send" class="btn" type="submit">Send</button>
+                </form>
+            </div>
         </div>
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="textoMensaje">What is your name?</label>
-                    <input type="text" id="textoMensaje" class="form-control" placeholder="Your name here...">
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
-            </form>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col-md-12">
+                <table id="conversation" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>MENSAJES</th>
+                    </tr>
+                    </thead>
+                    <tbody id="mensajes">
+                    <tr><td>Aquí aparecerán los mensajes recibidos</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>MENSAJES</th>
-                </tr>
-                </thead>
-                <tbody id="mensajes">
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+
+
+
+
+
+</section>
 </body>
 </html>
+
+
+
+

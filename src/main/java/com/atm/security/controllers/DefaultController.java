@@ -28,8 +28,6 @@ import java.util.List;
 @Controller
 public class DefaultController {
 
-
-
     private final EnviadorDeEmails enviadorDeEmails;
 
     /**
@@ -119,8 +117,6 @@ public class DefaultController {
     {
         return "paginaConLayout";
     }
-
-
 
 
 
