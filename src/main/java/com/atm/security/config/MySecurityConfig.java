@@ -63,6 +63,7 @@ public class MySecurityConfig {
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/logout").permitAll()
                                 .requestMatchers("/ficheros").permitAll()
+                                .requestMatchers("/peliculas/**").permitAll()
                                 .requestMatchers("/ficheros/**").permitAll()
                                 .requestMatchers("/prueba").authenticated()
                                 .requestMatchers("/paginaUsuarios").authenticated()
