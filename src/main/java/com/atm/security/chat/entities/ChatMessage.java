@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
-@Table(name = "hello_message")
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -21,8 +22,8 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String name;
     private String message;
+    private LocalDateTime timestamp;
 
 
 }

@@ -8,7 +8,6 @@ stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
 
     stompClient.subscribe('/topic/ciencia', (mensaje) => {
-
         console.log(mensaje);
         showMensaje(JSON.parse(mensaje.body).message);
     });
@@ -50,8 +49,9 @@ function sendMessage() {
 
     stompClient.publish({
         destination: "/app/ciencia",
-        body: JSON.stringify({'name': $("#name").val()})
+        body: JSON.stringify({'message': $("#textoMensaje").val()})
     });
+
 }
 
 function showMensaje(message) {

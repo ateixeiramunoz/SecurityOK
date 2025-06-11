@@ -14,10 +14,8 @@ public class ChatController {
     @SendTo("/topic/ciencia")
     public ChatMessage responderMensaje(ChatMessage pregunta) throws Exception {
 
-
         ChatMessage respuesta = new ChatMessage();
-        respuesta.setMessage("hola "+pregunta.getName());
-
+        respuesta.setMessage(pregunta.getMessage());
 
         return respuesta;
     }
@@ -28,7 +26,6 @@ public class ChatController {
     public String mostrarChat() {
         return "chat";
     }
-
 
 
 
