@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-    /**
+    /**º
      * Folder location for storing files
      */
     private String location = "C:\\hola";
